@@ -1,0 +1,145 @@
+#!/usr/bin/env python3
+"""
+Submit an image generation task and wait for completion
+
+This script combines imagine.py and get_task.py to provide a complete workflow:
+1. Submit the image generation task
+2. Poll for status updates
+3. Return the final result when complete
+
+Usage:
+    generate_and_wait.py "prompt text here" [--interval SECONDS] [--max-wait SECONDS]
+    generate_and_wait.py "a beautiful sunset --v 7" --interval 5 --max-wait 300
+
+Environment variables required:
+    LEGNEXT_API_KEY: Your Legnext API key from the dashboard
+"""
+
+import sys
+import os
+import time
+import json
+import argparse
+from imagine import submit_imagine_task
+from get_task import get_task_status
+
+
+def generate_and_wait(prompt, poll_interval=5, max_wait_time=300):
+    """
+    Submit an image generation task and wait for completion
+
+    Args:
+        prompt (str): The text prompt for image generation
+        poll_interval (int): Seconds to wait between status checks (default: 5)
+        max_wait_time (int): Maximum seconds to wait before timing out (default: 300)
+
+    Returns:
+        dict: Final task result or error information
+    """
+    # Step 1: Submit the task
+    print(f"Step 1: Submitting imagine task...")
+    print(f"Prompt: {prompt}\n")
+
+    result = submit_imagine_task(prompt)
+
+    if 'error' in result:
+        return result
+
+    job_id = result.get('job_id')
+    print(f"✓ Task submitted! Job ID: {job_id}")
+    print(f"Initial status: {result.get('status')}\n")
+
+    # Step 2: Poll for completion
+    print(f"Step 2: Waiting for completion (checking every {poll_interval}s)...")
+
+    elapsed = 0
+    while elapsed < max_wait_time:
+        time.sleep(poll_interval)
+        elapsed += poll_interval
+
+        status_result = get_task_status(job_id)
+
+        if 'error' in status_result:
+            return status_result
+
+        status = status_result.get('status')
+        print(f"[{elapsed}s] Status: {status}")
+
+        # Check if completed
+        if status == 'completed':
+            print(f"\n✓ Task completed successfully!")
+            return status_result
+
+        # Check if failed
+        if status == 'failed':
+            print(f"\n✗ Task failed!")
+            return status_result
+
+    # Timeout
+    return {
+        'error': 'Timeout',
+        'details': f'Task did not complete within {max_wait_time} seconds',
+        'job_id': job_id,
+        'last_status': status
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='Submit Midjourney image generation task and wait for completion'
+    )
+    parser.add_argument('prompt', help='Text prompt for image generation')
+    parser.add_argument('--interval', type=int, default=5,
+                       help='Polling interval in seconds (default: 5)')
+    parser.add_argument('--max-wait', type=int, default=300,
+                       help='Maximum wait time in seconds (default: 300)')
+
+    args = parser.parse_args()
+
+    # Check API key
+    if not os.environ.get('LEGNEXT_API_KEY'):
+        print("Error: LEGNEXT_API_KEY environment variable not set")
+        print("Please set your API key: export LEGNEXT_API_KEY=your_key_here")
+        sys.exit(1)
+
+    print("=" * 60)
+    print("Legnext Midjourney Image Generation")
+    print("=" * 60)
+    print()
+
+    result = generate_and_wait(args.prompt, args.interval, args.max_wait)
+
+    print("\n" + "=" * 60)
+    print("Final Result:")
+    print("=" * 60)
+    print(json.dumps(result, indent=2))
+
+    # Extract and display images if available
+    if result.get('status') == 'completed':
+        output = result.get('output', {})
+
+        # Try different possible keys for image URLs
+        image_urls = (
+            output.get('images') or
+            output.get('image_urls') or
+            output.get('imageUrls') or
+            []
+        )
+
+        if image_urls:
+            print("\n" + "=" * 60)
+            print("Generated Images:")
+            print("=" * 60)
+            for i, url in enumerate(image_urls, 1):
+                print(f"{i}. {url}")
+
+        # Display seed if available
+        if 'seed' in output:
+            print(f"\nSeed: {output['seed']}")
+
+    # Exit with appropriate code
+    sys.exit(0 if result.get('status') == 'completed' else 1)
+
+
+if __name__ == '__main__':
+    main()
