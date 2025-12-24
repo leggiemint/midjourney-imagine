@@ -13,6 +13,10 @@ Usage:
 
 Environment variables required:
     LEGNEXT_API_KEY: Your Legnext API key from the dashboard
+
+Configuration:
+    The script automatically looks for a .env file in the current directory
+    or parent directories and loads LEGNEXT_API_KEY from it.
 """
 
 import sys
@@ -20,6 +24,20 @@ import os
 import time
 import json
 import argparse
+from pathlib import Path
+
+# Load .env file if present
+try:
+    from dotenv import load_dotenv
+    current_dir = Path.cwd()
+    for parent in [current_dir] + list(current_dir.parents):
+        env_file = parent / '.env'
+        if env_file.exists():
+            load_dotenv(env_file)
+            break
+except ImportError:
+    pass
+
 from imagine import submit_imagine_task
 from get_task import get_task_status
 
@@ -98,8 +116,14 @@ def main():
 
     # Check API key
     if not os.environ.get('LEGNEXT_API_KEY'):
-        print("Error: LEGNEXT_API_KEY environment variable not set")
-        print("Please set your API key: export LEGNEXT_API_KEY=your_key_here")
+        print("Error: LEGNEXT_API_KEY not found")
+        print("\nPlease configure your Legnext API key:")
+        print("\n  Option 1 (Recommended): Create a .env file")
+        print("    echo \"LEGNEXT_API_KEY=your-api-key-here\" > .env")
+        print("\n  Option 2: Set environment variable")
+        print("    export LEGNEXT_API_KEY=your-api-key-here")
+        print("\n  Get your API key from: https://legnext.ai")
+        print("  (Dashboard → API Settings)")
         sys.exit(1)
 
     print("=" * 60)

@@ -1,0 +1,7 @@
+# Legnext Midjourney Imagine - Python Dependencies
+
+# Core dependencies
+requests>=2.31.0        # HTTP library for API calls
+
+# Optional: .env file support (recommended)
+python-dotenv>=1.0.0    # Load environment variables from .env file

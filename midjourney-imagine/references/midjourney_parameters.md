@@ -1,191 +1,379 @@
-# Midjourney Parameters Reference
+# Midjourney V7 Parameters Reference
 
-This document provides a comprehensive reference for Midjourney parameters that can be included in prompts submitted to the Legnext API.
+Complete reference for Midjourney parameters supported by the Legnext API.
 
-## Version Parameters
-
-### --v (Version)
-Controls which Midjourney model version to use.
-
-**Common versions:**
-- `--v 7` - Latest version (v7, draft mode)
-- `--v 6` - Version 6
-- `--v 5.2` - Version 5.2
-- `--v 5.1` - Version 5.1
-- `--v 5` - Version 5
-
-**Example:**
-```
-a beautiful landscape --v 7
-```
-
-### --draft
-Use draft mode for faster generation (available with v7).
-
-**Example:**
-```
-a cyberpunk city --v 7 --draft
-```
-
-## Aspect Ratio
+## Core Parameters
 
 ### --ar (Aspect Ratio)
-Sets the width-to-height ratio of the generated image.
 
-**Common ratios:**
-- `--ar 1:1` - Square (default)
-- `--ar 16:9` - Widescreen landscape
-- `--ar 9:16` - Portrait (mobile)
-- `--ar 4:3` - Traditional photo
-- `--ar 3:2` - Standard photo
-- `--ar 21:9` - Ultra-wide
-- `--ar 7:4` - Close to 16:9
+Controls image dimensions.
 
-**Example:**
-```
-a mountain vista --ar 16:9
-```
+| Ratio | Use Case | Feel |
+|-------|----------|------|
+| `1:1` | Instagram, avatars, square | Balanced |
+| `3:2` | Classic photography | Natural |
+| `2:3` | Portrait orientation | Vertical |
+| `4:5` | Instagram portrait | Tall portrait |
+| `16:9` | Widescreen, presentations | Cinematic |
+| `21:9` | Ultra-wide panoramic | Epic |
+| `9:16` | Mobile wallpapers, stories | Vertical social |
 
-## Style Parameters
+**Note**: Cannot use decimals. Use `--ar 139:100` instead of `--ar 1.39:1`.
 
-### --stylize or --s
+**Example**: `--ar 16:9`
+
+---
+
+### --stylize / --s (Stylization)
+
 Controls how much Midjourney applies its artistic interpretation.
 
-**Values:** 0-1000
-- Lower values (0-100): More literal interpretation, closer to prompt
-- Default: Varies by version
-- Higher values (500-1000): More artistic, Midjourney's aesthetic
+| Value | Effect | When to Use |
+|-------|--------|-------------|
+| `0-50` | Minimal styling, literal interpretation | Technical accuracy, products, photorealism |
+| `100` | Default balance | General use (default) |
+| `250-500` | Increased artistic interpretation | Creative/artistic work |
+| `750-1000` | Maximum artistic expression | Abstract, highly stylized art |
 
-**Example:**
+**Example**: `--s 500`
+
+---
+
+### --chaos / --c (Variation)
+
+Controls variation between the four images in a grid.
+
+| Value | Effect |
+|-------|--------|
+| `0` | Very similar results (default) |
+| `25-50` | Moderate variation |
+| `75-100` | Maximum variation |
+
+**Use cases**:
+- Low chaos: When you know exactly what you want
+- High chaos: Exploring different interpretations
+
+**Example**: `--chaos 30`
+
+---
+
+### --weird / --w (Weirdness)
+
+Adds unusual, quirky, or unexpected aesthetics (V7 feature).
+
+| Value | Effect |
+|-------|--------|
+| `0` | Normal output (default) |
+| `250-1000` | Subtle to noticeable oddness |
+| `1500-3000` | Maximum weirdness |
+
+**Note**: Can produce unexpected results. Start low and increase gradually.
+
+**Example**: `--weird 500`
+
+---
+
+### --quality / --q (Quality)
+
+Controls generation time and detail level.
+
+| Value | Effect |
+|-------|--------|
+| `0.25` | Fastest, lowest detail (4x faster, 1/4 cost) |
+| `0.5` | Quick, reduced detail (2x faster, 1/2 cost) |
+| `1` | Default quality (recommended) |
+
+**Note**: Higher values don't mean "better" — default is usually optimal.
+
+**Example**: `--q 1`
+
+---
+
+### --seed (Reproducibility)
+
+Sets random seed for reproducible results.
+
+**Range**: 0-4294967295
+
+**Use cases**:
+- Reproduce specific results
+- Create consistent variations
+- A/B test prompt changes
+
+**Example**: `--seed 12345`
+
+---
+
+### --no (Negative Prompt)
+
+Excludes specific elements from the image.
+
 ```
-a portrait of a cat --s 750
-```
-
-### --style
-Applies specific style variations (version-dependent).
-
-**Common styles:**
-- `--style raw` - More photographic, less stylized
-- `--style scenic` - Landscape-optimized (v7)
-
-**Example:**
-```
-a photograph of a city street --style raw
-```
-
-## Quality and Speed
-
-### --quality or --q
-Controls rendering quality and generation time.
-
-**Values:**
-- `.25` - Fastest, lowest quality (4x faster, 1/4 cost)
-- `.5` - Half quality (2x faster, 1/2 cost)
-- `1` - Standard quality (default)
-- `2` - Highest quality (2x slower, 2x cost, not always available)
-
-**Example:**
-```
-a detailed illustration --q 2
-```
-
-### --fast / --relax / --turbo
-Controls generation speed priority (requires specific plan).
-
-**Example:**
-```
-a quick sketch --fast
-```
-
-## Creativity Parameters
-
-### --chaos or --c
-Controls variation in results.
-
-**Values:** 0-100
-- 0: More predictable, consistent results
-- 100: More varied, unexpected results
-
-**Example:**
-```
-abstract art --chaos 80
-```
-
-### --weird or --w
-Introduces unconventional aesthetics (v7+).
-
-**Values:** 0-3000
-- 0: Normal
-- Higher values: More unusual/experimental
-
-**Example:**
-```
-a surreal landscape --weird 1500
-```
-
-## Seed
-
-### --seed
-Sets a random seed for reproducibility.
-
-**Values:** 0-4294967295
-- Use the same seed with the same prompt for similar results
-- Different seeds produce different variations
-
-**Example:**
-```
-a fantasy castle --seed 12345
-```
-
-## Negative Prompting
-
-### --no
-Excludes specific elements from the generation.
-
-**Example:**
-```
-a beach scene --no people --no clouds
+--no text, watermark, frame
+--no people
+--no modern elements
 ```
 
-## Image Weight
+**Important**:
+- Words interpreted separately: `--no red car` = no red AND no car
+- Don't use "without" or "don't" in prompt — they don't work
+- Limit to essential exclusions (too many can cause conflicts)
+
+---
+
+### --tile (Seamless Pattern)
+
+Creates seamless, tileable patterns.
+
+**Best for**: Textures, patterns, wallpapers, backgrounds
+
+**Example**: `geometric pattern --tile --ar 1:1`
+
+---
+
+## V7-Specific Parameters
+
+### --draft (Draft Mode)
+
+V7-exclusive: 10x faster generation at half cost for quick exploration.
+
+**Use for**:
+- Quick iterations and testing
+- Exploring prompt concepts
+- Finding direction before final quality
+
+**Example**: `a landscape --draft`
+
+**Note**: Remove `--draft` for final high-quality output.
+
+---
+
+### --style raw
+
+Reduces Midjourney's auto-beautification for literal interpretation.
+
+**When to use**:
+- Photorealistic images
+- Detailed, specific prompts
+- Precise control needed
+- Product photography
+
+**When NOT to use**:
+- Simple prompts (let MJ fill in gaps)
+- Highly stylized artistic work
+
+**Example**: `portrait, studio lighting --style raw --ar 2:3`
+
+---
+
+## Reference Parameters
+
+### --sref (Style Reference)
+
+Copies visual style from an image or code.
+
+**Basic usage**:
+```
+a forest scene --sref https://example.com/image.jpg
+```
+
+**SREF codes** (numeric style shortcuts):
+```
+a portrait --sref 5000
+```
+
+**Random style discovery**:
+```
+a cityscape --sref random
+```
+
+**Multiple style references**:
+```
+a scene --sref URL1 URL2 URL3
+```
+
+**Weighted style references**:
+```
+a scene --sref URL1::2 URL2::1
+```
+(First style twice as influential)
+
+---
+
+### --sw (Style Weight)
+
+Controls strength of style reference (use with --sref).
+
+| Value | Effect |
+|-------|--------|
+| `0` | Minimal style influence |
+| `100` | Default |
+| `500` | Strong influence |
+| `1000` | Maximum influence |
+
+**Example**: `--sref [URL] --sw 500`
+
+---
+
+### --cref (Character Reference)
+
+Maintains character appearance consistency across images.
+
+**Basic usage**:
+```
+a knight in a forest --cref https://example.com/character.jpg
+```
+
+**Multiple characters** (blends features):
+```
+--cref URL1 URL2
+```
+
+**Best practice**: Works best with Midjourney-generated characters. Real photos may produce distortions.
+
+---
+
+### --cw (Character Weight)
+
+Controls character reference consistency (use with --cref).
+
+| Value | Effect |
+|-------|--------|
+| `0` | Face only, different hair/clothes allowed |
+| `50` | Moderate consistency |
+| `100` | Full consistency: face, hair, AND clothes (default) |
+
+**Example**: `--cref [URL] --cw 100`
+
+---
 
 ### --iw (Image Weight)
-Controls the influence of an image prompt (when using image URLs).
 
-**Values:** 0-2
-- Default: 1
-- Higher values: Image has more influence
+Controls influence of image prompts.
 
-**Example:**
+**Range**: 0-3 (V7), default: 1
+
+**Usage**:
 ```
-https://example.com/image.jpg a painting --iw 1.5
-```
-
-## Other Parameters
-
-### --tile
-Generates seamless tiling patterns.
-
-**Example:**
-```
-floral pattern --tile
+[image_URL] a forest scene --iw 2
 ```
 
-### --video
-Creates a video of the generation process (may not be available in all versions).
+Higher values = image has more influence over the generation.
 
-## Parameter Combinations
+---
 
-Parameters can be combined in any order:
+## Multi-Prompts & Weights
+
+### :: (Double Colon)
+
+Separates concepts for independent interpretation.
 
 ```
-a majestic lion in savanna --v 7 --ar 16:9 --s 500 --q 1 --chaos 20
+space ship      → "spaceship" (one concept)
+space:: ship    → "space" and "ship" (two concepts)
 ```
+
+### Weighted Prompts
+
+```
+forest::3 cabin::1 river::1
+```
+Forest dominates (3x weight), cabin and river are secondary.
+
+### Negative Weights
+
+```
+flowers::-0.5
+```
+Reduces flowers (similar to --no).
+
+---
+
+## V7 Best Practices
+
+### DO
+
+- Use specific visual details
+- Include time of day, weather, specific elements
+- Place important elements early in prompt
+- Use `--style raw` for photorealism
+- Use `--draft` for quick exploration
+- Leverage V7's improved coherence for complex scenes
+
+### DON'T (Junk Words to Avoid)
+
+V7 produces high quality by default — these waste tokens:
+- ❌ 4k, 6k, 8k, 16k, ultra 4k
+- ❌ Octane, unreal, v-ray, lumion
+- ❌ HDR, high-resolution
+- ❌ Award-winning, photorealistic (unless specifically needed)
+- ❌ Masterpiece, highly detailed (redundant in V7)
+
+---
+
+## Recommended Parameter Combinations
+
+**Photorealism**:
+```
+--style raw --ar 2:3 --s 50
+```
+
+**Artistic freedom**:
+```
+--stylize 500 --chaos 25
+```
+
+**Consistent character series**:
+```
+--cref [URL] --cw 100 --seed [number]
+```
+
+**Style exploration**:
+```
+--sref random --sw 500 --c 50
+```
+
+**Quick iteration**:
+```
+--draft --chaos 50
+```
+
+**Seamless textures**:
+```
+--tile --style raw --ar 1:1
+```
+
+---
+
+## V7 Advantages
+
+V7 is Midjourney's most capable model:
+
+- **Superior prompt understanding** — More accurate interpretation of complex prompts
+- **Better coherence** — Improved hands, bodies, object relationships
+- **Richer textures** — Higher quality details by default
+- **Draft Mode** — 10x faster exploration at half cost
+- **Enhanced references** — Better --sref and --cref capabilities
+- **Personalization** — Applies learned preferences automatically
+
+---
+
+## Common Mistakes
+
+| Mistake | Problem | Solution |
+|---------|---------|----------|
+| Vague prompts | Unpredictable results | Be specific about subject, setting, style |
+| Using "don't/without" | Words ignored or reversed | Use `--no` parameter |
+| Too many --no items | Contradictory exclusions | Limit to essentials |
+| Ignoring --style raw | Over-stylized photos | Use raw for photorealism |
+| Not saving seeds | Can't reproduce results | Note seeds for favorites |
+| Adding junk words | Wasted tokens | Trust V7's default quality |
+
+---
 
 ## Notes
 
-- Parameters are space-separated and start with `--`
-- Parameter order doesn't matter
-- Not all parameters work with all versions
+- V7 is the default version (no need to specify `--v 7`)
+- Parameters can be combined in any order
+- Not all parameters work together (experiment to learn)
 - Some parameters may affect generation cost
-- Check Legnext documentation for version-specific parameter support

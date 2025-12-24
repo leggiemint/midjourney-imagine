@@ -1,267 +1,377 @@
-# Midjourney Prompt Engineering Guide
+# Midjourney V7 Prompt Engineering Guide
 
-This guide covers best practices for writing effective Midjourney prompts that produce high-quality images through the Legnext API.
+Professional guide for crafting effective Midjourney prompts through the Legnext API.
 
-## Basic Principles
+## Core Principle
 
-### 1. Be Specific and Descriptive
-The more detail you provide, the better the results.
+**Be specific about what you want to SEE, not abstract concepts.**
 
-**Instead of:**
+Short, specific prompts work best. V7 produces high quality by default — focus on visual details, not quality keywords.
+
+---
+
+## The 7-Element Framework
+
+Build complete, systematic prompts using these elements:
+
+| Element | Question | Examples |
+|---------|----------|----------|
+| **Subject** | Who/what is in the image? | A weathered fisherman, a cyberpunk samurai, vintage bicycle |
+| **Medium** | What art form? | Oil painting, photograph, 3D render, digital illustration |
+| **Environment** | Where is this? | Stormy harbor, neon-lit alley, misty forest, cobblestone street |
+| **Lighting** | How is it lit? | Golden hour, dramatic backlighting, soft diffused, studio lighting |
+| **Color** | What palette? | Muted blues, warm earth tones, high contrast, pastel colors |
+| **Mood** | What feeling? | Melancholic, triumphant, eerie, peaceful, energetic |
+| **Composition** | How is it framed? | Rule of thirds, centered, wide shot, close-up |
+
+**Example**:
 ```
-a cat
-```
-
-**Try:**
-```
-a fluffy orange tabby cat sitting on a windowsill, soft morning light, cozy atmosphere
-```
-
-### 2. Use Clear, Natural Language
-Write as if describing the scene to someone.
-
-**Good:**
-```
-a modern kitchen with marble countertops, stainless steel appliances, and large windows
-```
-
-**Also good:**
-```
-modern kitchen, marble counters, steel appliances, big windows, bright natural lighting
-```
-
-### 3. Order Matters (Usually)
-Place the most important elements at the beginning of your prompt.
-
-**Example:**
-```
-a majestic lion, golden mane, standing on a cliff, sunset background, dramatic lighting
+A weathered fisherman, oil painting, stormy harbor at dawn,
+dramatic backlighting, muted blues and grays, melancholic,
+rule of thirds composition --ar 3:2
 ```
 
-## Prompt Structure
+**Not all elements are required** — use what's relevant for your image.
 
-### Recommended Format
+---
+
+## Quick Prompt Structure
+
 ```
 [Subject] [Description] [Environment] [Lighting] [Style] [Parameters]
 ```
 
-**Example:**
+**Example**:
 ```
-a vintage bicycle, rusty frame with flowers in basket, cobblestone street in Paris, golden hour lighting, impressionist painting style --ar 16:9 --v 7
-```
-
-## Subject Types
-
-### Photography
-Add photography-specific terms:
-```
-portrait of a woman, professional headshot, studio lighting, 85mm lens, shallow depth of field, bokeh background --v 7
+30-year-old woman with freckles, wearing cream linen shirt,
+sun-drenched cafe, soft window light, Canon EOS R5, 85mm f/1.8,
+Kodak Portra 400 --ar 2:3 --style raw
 ```
 
-### Illustrations
-Specify the illustration style:
+---
+
+## Prompt Types & Templates
+
+### Photorealistic Portrait
+
 ```
-a fantasy dragon, digital illustration, concept art, highly detailed, vibrant colors, trending on artstation --ar 16:9
+[Age] [ethnicity if relevant] [gender] [action/pose], [clothing],
+[environment], [lighting type], [camera] [lens] [aperture],
+[film stock if desired] --ar [ratio] --style raw
 ```
 
-### 3D Renders
-Mention rendering techniques:
+**Example**:
 ```
-a sleek sports car, 3D render, octane render, studio lighting, metallic paint, reflections, ultra realistic --v 7
+45-year-old man with gray beard, wearing wool sweater, seated in rustic cabin,
+soft window light mixed with warm firelight, Hasselblad 80mm f/2.8,
+Kodak Portra 400 --ar 4:5 --style raw
 ```
 
-### Artistic Styles
-Reference specific art movements or artists:
+### Illustration/Art
+
 ```
-a cityscape at night, cyberpunk style, neon lights, blade runner aesthetic, cinematic --ar 21:9
+[Subject] in the style of [artist/medium], [environment],
+[lighting], [mood] --ar [ratio] --stylize [value]
 ```
+
+**Example**:
+```
+A mystical forest spirit, digital illustration in the style of Loish,
+enchanted woodland, dappled sunlight, ethereal and mysterious
+--ar 2:3 --stylize 250
+```
+
+### Product Photography
+
+```
+[Product] on [surface], [background], [lighting setup],
+professional product photography --ar [ratio] --style raw
+```
+
+**Example**:
+```
+Luxury watch on black marble surface, dark gradient background,
+dramatic side lighting with subtle rim light, professional product photography
+--ar 1:1 --style raw
+```
+
+### Landscape
+
+```
+[Scene], [time of day], [weather/atmosphere], [mood],
+[focal length] lens --ar [ratio]
+```
+
+**Example**:
+```
+Misty mountain valley with winding river, blue hour, low clouds clinging to peaks,
+ethereal and mysterious, 24mm wide angle, Fujifilm Velvia 100 --ar 16:9
+```
+
+### Character Design
+
+```
+[Character description], [pose], [outfit], [art style],
+full body shot --ar [ratio]
+```
+
+**Example**:
+```
+Fierce warrior princess in dynamic action pose, detailed ornate armor,
+cherry blossom battlefield, dramatic lighting --ar 2:3
+```
+
+---
+
+## V7 Best Practices
+
+### DO
+
+✓ Be specific with visual details
+✓ Use natural language clearly
+✓ Include time of day, weather, specific elements
+✓ Place important elements early in prompt
+✓ Use `--style raw` for photorealism and precise control
+✓ Use `--draft` for quick exploration iterations
+✓ Leverage V7's improved coherence for complex scenes
+
+### DON'T (Junk Words to Avoid)
+
+V7 produces high quality by default — **avoid these wasteful tokens**:
+
+❌ 4k, 6k, 8k, 16k, ultra 4k, high resolution, HDR
+❌ Octane, unreal engine, v-ray, lumion
+❌ Award-winning, photorealistic (unless specifically needed)
+❌ Masterpiece, highly detailed, intricate details (redundant in V7)
+❌ Ultra realistic, trending on artstation (unnecessary)
+
+**Trust V7's default quality** — add meaningful visual details instead.
+
+---
+
+## Advanced Techniques
+
+### Style Reference (--sref)
+
+Copy visual style from images or codes:
+
+```
+a mountain landscape --sref https://example.com/image.jpg
+```
+
+**SREF codes**:
+```
+a portrait --sref 5000
+```
+
+**Random styles**:
+```
+a cityscape --sref random
+```
+
+**Multiple weighted references**:
+```
+a scene --sref URL1::2 URL2::1 --sw 500
+```
+
+See `midjourney_parameters.md` for full --sref details.
+
+### Character Reference (--cref)
+
+Maintain character consistency:
+
+```
+a knight in a forest --cref https://example.com/character.jpg --cw 100
+```
+
+**Best with** Midjourney-generated characters. Real photos may distort.
+
+### Multi-Prompts & Weights
+
+Separate concepts with `::`
+
+```
+space ship      → "spaceship" (one concept)
+space:: ship    → "space" and "ship" (two concepts)
+```
+
+**Weighted prompts**:
+```
+forest::3 cabin::1 river::1
+```
+
+**Negative weights** (like --no):
+```
+flowers::-0.5
+```
+
+---
 
 ## Effective Descriptors
 
 ### Lighting
 - Golden hour, blue hour, sunset, sunrise
-- Studio lighting, dramatic lighting, soft lighting
+- Studio lighting, Rembrandt lighting, clamshell lighting
 - Backlit, rim lighting, volumetric lighting
-- Natural light, harsh shadows, diffused light
+- Soft diffused, harsh sunlight, dappled light
+- Cinematic lighting, chiaroscuro, neon lighting
 
 ### Mood/Atmosphere
 - Cozy, dramatic, peaceful, chaotic
 - Mysterious, ethereal, gritty, serene
-- Dark and moody, bright and cheerful
+- Melancholic, triumphant, eerie, energetic
 
-### Quality/Detail
-- Highly detailed, intricate details
-- Sharp focus, ultra realistic
-- 4K, 8K, high resolution
-- Professional, award-winning
+### Camera & Lens
+- 14mm (extreme wide), 24mm (wide), 35mm (versatile)
+- 50mm (natural), 85mm (portrait), 135mm (telephoto), 200mm+ (compressed)
+- Wide aperture (f/1.4, f/1.8), shallow depth of field, bokeh
+- Sharp focus, rule of thirds, centered composition
 
-### Camera/Perspective
-- Wide angle, telephoto, fisheye
-- Aerial view, bird's eye view, worm's eye view
-- Close-up, macro, extreme close-up
-- 35mm, 50mm, 85mm, 200mm lens
+### Film Stocks
+- Kodak Portra 400/800 (natural skin tones, soft contrast)
+- Kodak Ektar 100 (vivid colors, punchy)
+- Fujifilm Velvia 100 (extremely vivid, saturated greens)
+- Cinestill 800T (tungsten-balanced, halation, cinematic)
+- Kodak Tri-X 400 (black & white, classic grain, high contrast)
 
-### Artistic References
-- In the style of [artist name]
-- [Art movement] style (impressionism, art deco, etc.)
-- Like a [medium] (oil painting, watercolor, pencil sketch)
+See `photography.md` for comprehensive camera/lighting terminology.
 
-## Common Patterns
+---
 
-### Pattern 1: Product Photography
+## Common Mistakes
+
+| Mistake | Problem | Solution |
+|---------|---------|----------|
+| Vague prompts | Unpredictable results | Be specific: subject, setting, style, lighting |
+| Using "don't/without" | Words ignored/reversed | Use `--no` parameter |
+| Overly long prompts | Confused output | Keep under ~40 words, use `/shorten` command |
+| Adding junk words | Wasted tokens | Trust V7's quality, add visual details instead |
+| Contradictory terms | Conflicting output | Check for logical conflicts (e.g., "dark bright scene") |
+| Ignoring --style raw | Over-stylized photos | Use `--style raw` for photorealism |
+| Not saving seeds | Can't reproduce | Note `--seed` values from favorites |
+
+---
+
+## Negative Prompts (--no)
+
+**Correct usage**:
 ```
-[Product], product photography, white background, studio lighting, commercial, high resolution --ar 1:1 --v 7
-```
-
-### Pattern 2: Character Design
-```
-[Character description], character design, full body, concept art, detailed costume, white background --ar 3:4 --v 7
-```
-
-### Pattern 3: Landscape Scene
-```
-[Location], landscape photography, [time of day], [weather], dramatic sky, wide angle --ar 16:9 --v 7
-```
-
-### Pattern 4: Interior Design
-```
-[Room type], interior design, [style], natural lighting, cozy atmosphere, architectural photography --ar 16:9 --v 7
-```
-
-## Advanced Techniques
-
-### Multi-Prompting with ::
-Use `::` to separate concepts and assign weights:
-
-```
-cat::2 dog::1
-```
-This gives twice as much weight to "cat" compared to "dog".
-
-### Using Negative Prompts
-Exclude unwanted elements with `--no`:
-
-```
-a clean modern office --no clutter --no people --no windows
+still life painting --no fruit, shadows, bright colors
 ```
 
-### Consistency with Seeds
-Reuse seed values for similar variations:
+**Critical warnings**:
+- "don't" and "without" DO NOT work — use `--no` instead
+- `--no modern clothing` = "no modern" AND "no clothing" (words interpreted separately)
+- Limit to essential exclusions (too many can conflict)
+
+---
+
+## Text in Images
 
 ```
-a magical forest --seed 12345 --v 7
+A storefront sign that says "BAKERY"
 ```
 
-## What to Avoid
+**Tips** (V7 handles text better than previous versions):
+- Use **double quotes** only (single quotes don't work)
+- Keep text SHORT (5 words or fewer)
+- Include context: "sign that says", "text reading"
+- Use `--style raw` for better accuracy
+- Lower `--stylize` helps text clarity
 
-### 1. Overly Long Prompts
-Midjourney has a character limit. Be concise.
+---
 
-**Too long:**
-```
-a beautiful amazing stunning gorgeous incredible fantastic wonderful excellent perfect majestic cat
-```
+## Key Principles
 
-**Better:**
-```
-a majestic cat, regal pose, dramatic lighting
-```
+### The Specificity Principle
+More specific = more control. Vague prompts let Midjourney decide; specific prompts give you your vision.
 
-### 2. Contradictory Terms
-Avoid conflicting descriptions:
+### The Subtraction Principle
+Adding more words doesn't always help. Use `/shorten` command to identify essential terms.
 
-**Confusing:**
-```
-a dark bright scene
-```
+### The Reference Power Law
+`--sref` and `--cref` provide more consistent control than text descriptions alone.
 
-**Better:**
-```
-a dimly lit scene with bright highlights
-```
+### The Iteration Mindset
+First generation = starting point. Use variations, remix, and parameter adjustments to refine.
 
-### 3. Abstract Concepts Without Visual Cues
-Give visual context to abstract ideas:
-
-**Vague:**
-```
-happiness
-```
-
-**Better:**
-```
-a joyful family laughing together at a picnic, sunny day, bright colors, warm atmosphere
-```
-
-## Style References
-
-### Photographic Styles
-- Documentary photography
-- Fashion photography
-- Street photography
-- Architectural photography
-- Wildlife photography
-- Astrophotography
-
-### Art Styles
-- Photorealistic
-- Impressionist
-- Surrealist
-- Abstract
-- Minimalist
-- Pop art
-- Art nouveau
-- Cyberpunk
-- Steampunk
-
-### Media Types
-- Oil painting
-- Watercolor
-- Digital art
-- Pencil sketch
-- Ink drawing
-- 3D render
-- Clay sculpture
-- Vector art
-
-## Testing and Iteration
-
-1. **Start Simple**: Begin with a basic prompt
-2. **Add Details Gradually**: Refine one aspect at a time
-3. **Use Variations**: Try different phrasings for the same concept
-4. **Experiment with Parameters**: Test different `--s`, `--chaos`, `--ar` values
-5. **Save Good Seeds**: Note seed values from successful generations
+---
 
 ## Examples by Use Case
 
 ### Logo Design
 ```
-minimalist logo design for a coffee shop, simple line art, modern, clean, vector style --v 7
+minimalist logo design for tech startup, modern, clean lines,
+geometric, professional, simple icon --v 7 --ar 1:1
 ```
 
 ### Book Cover
 ```
-fantasy book cover, mysterious forest with glowing portal, magical atmosphere, professional book cover design --ar 3:4 --v 7
+fantasy book cover, mysterious forest with glowing portal,
+magical atmosphere, professional book cover design --ar 3:4 --v 7
 ```
 
 ### Social Media Post
 ```
-motivational quote background, gradient colors, abstract shapes, modern design, instagram post --ar 4:5 --v 7
+motivational quote background, gradient colors blue to purple,
+abstract shapes, modern design --ar 4:5
 ```
 
 ### Website Hero Image
 ```
-tech startup hero image, modern office space, diverse team collaborating, bright and professional, wide angle --ar 21:9 --v 7
+tech startup hero image, modern office space, diverse team collaborating,
+bright and professional, wide angle --ar 21:9 --style raw
 ```
 
-### Product Mockup
+### Seamless Pattern
 ```
-smartphone mockup, hand holding phone, clean background, lifestyle photography, natural lighting --ar 9:16 --v 7
+geometric pattern, blue and gold Art Deco style --tile --ar 1:1 --style raw
 ```
 
-## Resources
+---
 
-- Experiment with different parameter combinations
-- Study successful prompts from the Midjourney community
-- Keep a prompt library of patterns that work well for your needs
-- Use reference images when possible (image URLs in prompts)
+## Testing and Iteration
+
+1. **Start Simple** — Begin with basic prompt
+2. **Add Details Gradually** — Refine one aspect at a time
+3. **Use `--draft`** — 10x faster exploration
+4. **Experiment with Parameters** — Test `--s`, `--chaos`, `--ar` values
+5. **Save Good Seeds** — Note seeds from successful generations
+6. **Use `/shorten`** — Identify essential vs unnecessary words
+
+---
+
+## Quick Reference
+
+**Basic prompt**:
+```
+[subject], [description], [environment], [lighting] --ar [ratio]
+```
+
+**Photorealistic**:
+```
+[subject], [details], [lighting], [camera] [lens] [aperture], [film stock] --ar [ratio] --style raw
+```
+
+**Artistic**:
+```
+[subject], [style], [mood], [composition] --ar [ratio] --stylize [value]
+```
+
+**With style reference**:
+```
+[subject], [details] --sref [URL or code] --sw [0-1000] --ar [ratio]
+```
+
+**With character reference**:
+```
+[subject], [scene] --cref [URL] --cw [0-100] --ar [ratio]
+```
+
+---
+
+## Additional Resources
+
+- **Parameters**: See `midjourney_parameters.md` for complete parameter reference
+- **Photography**: See `photography.md` for detailed camera/lighting terminology
+- **API**: See `api_reference.md` for Legnext API details

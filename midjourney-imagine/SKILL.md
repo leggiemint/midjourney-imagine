@@ -1,85 +1,292 @@
 ---
 name: midjourney-imagine
-description: [TODO: Complete and informative explanation of what the skill does and when to use it. Include WHEN to use this skill - specific scenarios, file types, or tasks that trigger it.]
+description: Generate AI images using Midjourney through the Legnext API. Use this skill when users request Midjourney-style image generation, visual content creation, or ask to create/generate images with natural language descriptions. Handles prompt engineering, API calls, task polling, and result retrieval.
 ---
 
 # Midjourney Imagine
 
-## Overview
+Generate professional AI images using Midjourney's capabilities through the Legnext API.
 
-[TODO: 1-2 sentences explaining what this skill enables]
+## Setup
 
-## Structuring This Skill
+**CRITICAL**: This skill requires a Legnext API key. Before running, check if the user has configured their API key:
 
-[TODO: Choose the structure that best fits this skill's purpose. Common patterns:
+### Check for existing configuration:
+- Look for a `.env` file in the project directory or parent directories
+- Check for `LEGNEXT_API_KEY=<key>` in the `.env` file
+- Or check environment variable: `echo $LEGNEXT_API_KEY`
 
-**1. Workflow-Based** (best for sequential processes)
-- Works well when there are clear step-by-step procedures
-- Example: DOCX skill with "Workflow Decision Tree" → "Reading" → "Creating" → "Editing"
-- Structure: ## Overview → ## Workflow Decision Tree → ## Step 1 → ## Step 2...
+### If not found, inform the user they need to:
 
-**2. Task-Based** (best for tool collections)
-- Works well when the skill offers different operations/capabilities
-- Example: PDF skill with "Quick Start" → "Merge PDFs" → "Split PDFs" → "Extract Text"
-- Structure: ## Overview → ## Quick Start → ## Task Category 1 → ## Task Category 2...
+**Option 1: Create a .env file (recommended)**
+```bash
+# Create .env file in the project root
+echo "LEGNEXT_API_KEY=your-api-key-here" > .env
+```
 
-**3. Reference/Guidelines** (best for standards or specifications)
-- Works well for brand guidelines, coding standards, or requirements
-- Example: Brand styling with "Brand Guidelines" → "Colors" → "Typography" → "Features"
-- Structure: ## Overview → ## Guidelines → ## Specifications → ## Usage...
+**Option 2: Set environment variable**
+```bash
+export LEGNEXT_API_KEY=your-api-key-here
+```
 
-**4. Capabilities-Based** (best for integrated systems)
-- Works well when the skill provides multiple interrelated features
-- Example: Product Management with "Core Capabilities" → numbered capability list
-- Structure: ## Overview → ## Core Capabilities → ### 1. Feature → ### 2. Feature...
+### Get an API key from:
+**https://legnext.ai/app/api-keys**
 
-Patterns can be mixed and matched as needed. Most skills combine patterns (e.g., start with task-based, add workflow for complex operations).
+### Verification:
+The scripts will automatically detect the `.env` file and provide clear error messages if the API key is missing.
 
-Delete this entire "Structuring This Skill" section when done - it's just guidance.]
+## Quick Start
 
-## [TODO: Replace with the first main section based on chosen structure]
+For simple image generation requests:
 
-[TODO: Add content here. See examples in existing skills:
-- Code samples for technical skills
-- Decision trees for complex workflows
-- Concrete examples with realistic user requests
-- References to scripts/templates/references as needed]
+```bash
+python scripts/generate_and_wait.py "a beautiful sunset over mountains --v 7 --ar 16:9"
+```
 
-## Resources
+This handles the complete workflow: submit task → poll status → return results.
 
-This skill includes example resource directories that demonstrate how to organize different types of bundled resources:
+## Complete Workflow
 
-### scripts/
-Executable code (Python/Bash/etc.) that can be run directly to perform specific operations.
+### 1. Understand the User's Request
 
-**Examples from other skills:**
-- PDF skill: `fill_fillable_fields.py`, `extract_form_field_info.py` - utilities for PDF manipulation
-- DOCX skill: `document.py`, `utilities.py` - Python modules for document processing
+Identify what type of image the user wants:
+- Subject matter (people, landscapes, objects, abstract)
+- Style (photographic, illustrated, artistic)
+- Mood and atmosphere
+- Technical requirements (aspect ratio, quality)
 
-**Appropriate for:** Python scripts, shell scripts, or any executable code that performs automation, data processing, or specific operations.
+### 2. Craft the Prompt
 
-**Note:** Scripts may be executed without loading into context, but can still be read by Claude for patching or environment adjustments.
+Transform the user's natural language request into an effective Midjourney prompt.
 
-### references/
-Documentation and reference material intended to be loaded into context to inform Claude's process and thinking.
+**Use the 7-Element Framework** for systematic prompts:
+- Subject, Medium, Environment, Lighting, Color, Mood, Composition
 
-**Examples from other skills:**
-- Product management: `communication.md`, `context_building.md` - detailed workflow guides
-- BigQuery: API reference documentation and query examples
-- Finance: Schema documentation, company policies
+**Quick structure:**
+```
+[Subject] [Description] [Environment] [Lighting] [Style] [Parameters]
+```
 
-**Appropriate for:** In-depth documentation, API references, database schemas, comprehensive guides, or any detailed information that Claude should reference while working.
+**Example transformations:**
 
-### assets/
-Files not intended to be loaded into context, but rather used within the output Claude produces.
+User request: "I need a professional headshot"
+→ Prompt: `professional headshot, studio lighting, neutral background, sharp focus, 85mm lens --ar 2:3 --style raw`
 
-**Examples from other skills:**
-- Brand styling: PowerPoint template files (.pptx), logo files
-- Frontend builder: HTML/React boilerplate project directories
-- Typography: Font files (.ttf, .woff2)
+User request: "Create a cyberpunk city scene"
+→ Prompt: `cyberpunk city at night, neon lights, flying cars, rain-soaked streets, cinematic, blade runner aesthetic --ar 16:9`
 
-**Appropriate for:** Templates, boilerplate code, document templates, images, icons, fonts, or any files meant to be copied or used in the final output.
+**Key principles:**
+- Be specific about what you want to SEE (not abstract concepts)
+- Front-load important elements
+- Trust V7's default quality — avoid junk words (4K, HDR, award-winning)
+- Use `--style raw` for photorealism
 
----
+For the complete 7-Element Framework and advanced techniques, see `references/prompt_engineering.md`.
+For photography terminology (camera, lighting, film stocks), see `references/photography.md`.
 
-**Any unneeded directories can be deleted.** Not every skill requires all three types of resources.
+### 3. Add Midjourney Parameters
+
+Append parameters to optimize the generation:
+
+**Common parameters:**
+- `--v 7` - Use Midjourney v7 (recommended)
+- `--ar 16:9` - Aspect ratio (1:1, 16:9, 9:16, 3:2, etc.)
+- `--s 500` - Stylization level (0-1000)
+- `--q 1` - Quality (0.25, 0.5, 1, 2)
+- `--chaos 20` - Variation amount (0-100)
+
+**Example:**
+```
+a majestic lion in savanna --v 7 --ar 16:9 --s 500 --q 1
+```
+
+For complete parameter reference, consult `references/midjourney_parameters.md`.
+
+### 4. Submit and Monitor
+
+Use the appropriate script based on your needs:
+
+**Option A: Complete workflow (recommended)**
+```bash
+python scripts/generate_and_wait.py "your prompt here"
+```
+
+This automatically:
+- Submits the task to Legnext API
+- Polls every 5 seconds for status updates
+- Returns final results when complete
+- Times out after 5 minutes if not completed
+
+**Option B: Manual control**
+
+Submit task:
+```bash
+python scripts/imagine.py "your prompt here"
+# Returns: {"job_id": "uuid", "status": "pending"}
+```
+
+Check status:
+```bash
+python scripts/get_task.py <job_id>
+# Returns: {"status": "processing|completed|failed", "output": {...}}
+```
+
+### 5. Handle Results
+
+When the task completes successfully:
+
+**Output structure:**
+```json
+{
+  "job_id": "uuid",
+  "status": "completed",
+  "output": {
+    "images": ["url1", "url2", "url3", "url4"],
+    "seed": 123456789
+  }
+}
+```
+
+**Typically 4 image variations are generated.**
+
+Present the image URLs to the user. Images are:
+- Accessible via HTTPS URLs
+- Stored temporarily (download if needed for permanent storage)
+- Usually high resolution
+
+If the user wants variations of a specific result, note the `seed` value and include `--seed <value>` in future prompts for consistency.
+
+## Common Usage Patterns
+
+### Pattern 1: Single Image Request
+User: "Generate a photo of a coffee shop interior"
+
+Response workflow:
+1. Craft prompt: `cozy coffee shop interior, wooden furniture, plants, warm lighting, customers, rustic decor --ar 16:9 --v 7`
+2. Run: `python scripts/generate_and_wait.py "..."`
+3. Present the 4 generated image URLs
+4. Ask if they'd like variations or adjustments
+
+### Pattern 2: Specific Style Request
+User: "Create a logo design for a tech startup"
+
+Response workflow:
+1. Craft prompt: `minimalist logo design for tech startup, modern, clean lines, geometric, professional, simple icon --v 7 --ar 1:1 --s 250`
+2. Generate and present results
+3. If needed, iterate with `--seed` for consistency
+
+### Pattern 3: Batch Generation
+User: "I need several variations of a mountain landscape"
+
+Response workflow:
+1. Generate first set: `majestic mountain landscape, snow peaks, alpine lake, dramatic sky --ar 16:9 --v 7`
+2. Use different `--chaos` or `--seed` values for variations
+3. Or adjust prompt slightly for different moods/times of day
+
+### Pattern 4: Iterative Refinement
+User: "The image is too dark, can you make it brighter?"
+
+Response workflow:
+1. Add lighting keywords: "bright, well-lit, sunny, vibrant colors"
+2. Keep successful elements from original prompt
+3. Adjust `--s` (stylization) if needed
+4. Use original `--seed` with modifications for consistency
+
+## Troubleshooting
+
+### API Key Issues
+```
+Error: LEGNEXT_API_KEY environment variable not set
+```
+→ User needs to set: `export LEGNEXT_API_KEY=their_key`
+
+### Task Timeout
+```
+Error: Task did not complete within 300 seconds
+```
+→ Complex prompts may take longer. Manually check with `get_task.py <job_id>`
+
+### Failed Tasks
+```
+Status: failed
+```
+→ Common causes:
+- Invalid prompt (too short/long, forbidden content)
+- Insufficient credits in Legnext account
+- Invalid parameter combinations
+Check error details in the response
+
+### Generation Quality Issues
+If results don't match expectations:
+- Add more descriptive keywords
+- Adjust `--s` (stylization) parameter
+- Try different versions (`--v 6` vs `--v 7`)
+- Consult `references/prompt_engineering.md` for techniques
+
+## Advanced Features
+
+### Using Reference Images
+Include image URLs in prompts:
+```
+https://example.com/reference.jpg a painting in this style --v 7
+```
+
+### Negative Prompting
+Exclude unwanted elements:
+```
+a bedroom interior --no clutter --no windows --v 7
+```
+
+### Multi-Prompting
+Weight different concepts:
+```
+cat::2 dog::1 playing together --v 7
+```
+This emphasizes "cat" twice as much as "dog".
+
+### Consistent Seeds
+For variations of the same concept:
+1. Note the seed from a successful generation
+2. Use `--seed <value>` in subsequent prompts
+3. Modify other aspects while maintaining consistency
+
+## Reference Documentation
+
+- **Midjourney Parameters**: See `references/midjourney_parameters.md` for complete parameter list and usage
+- **Prompt Engineering**: See `references/prompt_engineering.md` for advanced techniques and patterns
+- **API Reference**: See `references/api_reference.md` for detailed API documentation
+
+## Scripts
+
+This skill provides three Python scripts:
+
+1. **generate_and_wait.py** - Complete workflow (recommended)
+   - Submits task and waits for completion
+   - Usage: `python scripts/generate_and_wait.py "prompt"`
+
+2. **imagine.py** - Submit generation task
+   - Returns job_id immediately
+   - Usage: `python scripts/imagine.py "prompt"`
+
+3. **get_task.py** - Check task status
+   - Query any task by job_id
+   - Usage: `python scripts/get_task.py <job_id>`
+
+All scripts require `LEGNEXT_API_KEY` environment variable.
+
+## Best Practices
+
+1. **Start with clear descriptions** - More detail usually produces better results
+2. **Use appropriate aspect ratios** - Match the intended use case
+3. **Iterate based on results** - Refine prompts based on what works
+4. **Save successful prompts** - Build a library of effective patterns
+5. **Mind the credits** - Each generation consumes Legnext API points
+6. **Download important images** - Temporary storage may expire
+
+## Notes
+
+- Generation typically takes 30-90 seconds
+- Complex prompts or high quality settings may take longer
+- Each request usually generates 4 image variations
+- Images are temporarily stored; download for permanent use
+- API usage is tracked via points system in Legnext dashboard
